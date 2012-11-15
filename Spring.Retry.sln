@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring.Retry", "src\Spring.Retry\Spring.Retry.csproj", "{E50688A1-CD5F-4A5B-80AF-892456E7300D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring.Retry.Tests", "Spring.Retry.Tests\Spring.Retry.Tests.csproj", "{86A2A023-4673-45B5-B763-C45A088FE7D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring.Retry.Tests", "src\Spring.Retry.Tests\Spring.Retry.Tests.csproj", "{86A2A023-4673-45B5-B763-C45A088FE7D9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0D124CD7-42B6-44E3-89A3-24345CC6029B}"
 	ProjectSection(SolutionItems) = preProject
