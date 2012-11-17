@@ -29,6 +29,6 @@ log.txt*
 /*.Amqp.build~
 /package/
 /packages/
-*.nupkg
+/build/*.nupkg
 src/CommonAssemblyInfo.cs
 Spring.Net.snk
