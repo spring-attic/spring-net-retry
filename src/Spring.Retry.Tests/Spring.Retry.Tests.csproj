@@ -60,6 +60,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classify\BackToBackPatternClassifierTests.cs" />
+    <Compile Include="Classify\BinaryExceptionClassifierTests.cs" />
+    <Compile Include="Classify\ClassifierAdapterTests.cs" />
+    <Compile Include="Classify\ClassifierSupportTests.cs" />
+    <Compile Include="Classify\PatternMatchingClassifierTests.cs" />
+    <Compile Include="Classify\SubclassExceptionClassifierTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

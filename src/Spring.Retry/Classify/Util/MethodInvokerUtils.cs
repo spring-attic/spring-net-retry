@@ -140,7 +140,7 @@ namespace Spring.Retry.Classify.Util
         /// <returns>The Spring.Retry.Classify.Util.IMethodInvoker for the provided attribute, null if none is found.</returns>
         public static IMethodInvoker GetMethodInvokerByAttribute(Type attributeType, object target)
         {
-            AssertUtils.AssertArgumentType(attributeType, "attributeType", typeof(Attribute), "attributeType should be an Attribute");
+            AssertUtils.IsTrue(typeof(Attribute).IsAssignableFrom(attributeType), "attributeType should be an Attribute");
 
             AssertUtils.ArgumentNotNull(target, "Target must not be null");
             AssertUtils.ArgumentNotNull(attributeType, "AttributeType must not be null");
@@ -186,7 +186,7 @@ namespace Spring.Retry.Classify.Util
             var methods = target.GetType().GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             foreach (var method in methods)
             {
-                if (method.GetParameters().Length <= 1)
+                if (method.GetParameters().Length != 1)
                 {
                     break;
                 }

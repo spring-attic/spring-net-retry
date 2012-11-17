@@ -27,17 +27,18 @@ namespace Spring.Retry.Classify
     public class PatternMatcher<T>
     {
         private IDictionary<string, T> map = new Dictionary<string, T>();
-        private readonly List<string> sorted = new List<string>();
+
+        private List<string> sorted = new List<string>();
 
         /// <summary>Initializes a new instance of the <see cref="PatternMatcher{T}"/> class.</summary>
         /// <param name="map">The map.</param>
-        public PatternMatcher(IDictionary<string, T> map)
+        public PatternMatcher(IDictionary<string, T> map) : base()
         {
             this.map = map;
 
             // Sort keys to start with the most specific
             this.sorted = new List<string>(map.Keys);
-            this.sorted.Sort((s1, s2) => string.Compare(s1, s2, System.StringComparison.Ordinal));
+            this.sorted.Sort((s1, s2) => string.Compare(s2, s1, System.StringComparison.Ordinal));
         }
 
         public static bool Match(string pattern, string str)
