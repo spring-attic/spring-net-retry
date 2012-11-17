@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IClassifier.cs" company="The original author or authors.">
+// <copyright file="ClassifierSupport.cs" company="The original author or authors.">
 //   Copyright 2002-2012 the original author or authors.
 //   
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -15,16 +15,20 @@
 
 namespace Spring.Retry.Classify
 {
-    /// <summary>Interface for a classifier. At its simplest a <see cref="IClassifier{C,T}"/> is just a map from objects of one type to objects of another type.</summary>
-    /// <typeparam name="C">Type C</typeparam>
-    /// <typeparam name="T">Type T</typeparam>
-    /// <author>Dave Syer</author>
-    /// <author>Joe Fitzgerald (.NET)</author>
-    public interface IClassifier<C, T>
+    /// <summary>Base class for <see cref="IClassifier{C,T}"/> implementations. Provides default behavior and some convenience members, like constants.</summary>
+    /// <typeparam name="C">Type C.</typeparam>
+    /// <typeparam name="T">Type T.</typeparam>
+    public class ClassifierSupport<C, T> : IClassifier<C, T>
     {
-        /// <summary>The classify.</summary>
+        private readonly T defaultValue;
+
+        /// <summary>Initializes a new instance of the <see cref="ClassifierSupport{C,T}"/> class.</summary>
+        /// <param name="defaultValue">The default value.</param>
+        public ClassifierSupport(T defaultValue) { this.defaultValue = defaultValue; }
+
+        /// <summary>Always returns the default value. This is the main extension point for subclasses, so it must be able to classify null.</summary>
         /// <param name="classifiable">The classifiable.</param>
         /// <returns>The T.</returns>
-        T Classify(C classifiable);
+        public T Classify(C classifiable) { return this.defaultValue; }
     }
 }

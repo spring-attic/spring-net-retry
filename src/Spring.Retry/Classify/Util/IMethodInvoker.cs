@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IClassifier.cs" company="The original author or authors.">
+// <copyright file="IMethodInvoker.cs" company="The original author or authors.">
 //   Copyright 2002-2012 the original author or authors.
 //   
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -13,18 +13,18 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Spring.Retry.Classify
+namespace Spring.Retry.Classify.Util
 {
-    /// <summary>Interface for a classifier. At its simplest a <see cref="IClassifier{C,T}"/> is just a map from objects of one type to objects of another type.</summary>
-    /// <typeparam name="C">Type C</typeparam>
-    /// <typeparam name="T">Type T</typeparam>
-    /// <author>Dave Syer</author>
+    /// <summary>
+    /// A strategy interface for invoking a method. Typically used by adapters.
+    /// </summary>
+    /// <author>Mark Fisher</author>
     /// <author>Joe Fitzgerald (.NET)</author>
-    public interface IClassifier<C, T>
+    public interface IMethodInvoker
     {
-        /// <summary>The classify.</summary>
-        /// <param name="classifiable">The classifiable.</param>
-        /// <returns>The T.</returns>
-        T Classify(C classifiable);
+        /// <summary>The invoke method.</summary>
+        /// <param name="args">The args.</param>
+        /// <returns>The System.Object.</returns>
+        object InvokeMethod(params object[] args);
     }
 }

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IClassifier.cs" company="The original author or authors.">
+// <copyright file="ClassifierAttribute.cs" company="The original author or authors.">
 //   Copyright 2002-2012 the original author or authors.
 //   
 //   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -13,18 +13,19 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Spring.Retry.Classify
+#region Using Directives
+using System;
+#endregion
+
+namespace Spring.Retry.Classify.Attributes
 {
-    /// <summary>Interface for a classifier. At its simplest a <see cref="IClassifier{C,T}"/> is just a map from objects of one type to objects of another type.</summary>
-    /// <typeparam name="C">Type C</typeparam>
-    /// <typeparam name="T">Type T</typeparam>
+    /// <summary>
+    /// Mark a method as capable of classifying its input to an instance of its output. Should only be used on non-void methods with one parameter.
+    /// </summary>
     /// <author>Dave Syer</author>
     /// <author>Joe Fitzgerald (.NET)</author>
-    public interface IClassifier<C, T>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class ClassifierAttribute : Attribute
     {
-        /// <summary>The classify.</summary>
-        /// <param name="classifiable">The classifiable.</param>
-        /// <returns>The T.</returns>
-        T Classify(C classifiable);
     }
 }
