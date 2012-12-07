@@ -73,11 +73,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Retry\Backoff\BackOffInterruptedException.cs" />
     <Compile Include="Retry\Backoff\ExponentialBackOffPolicy.cs" />
+    <Compile Include="Retry\Backoff\ExponentialRandomBackOffPolicy.cs" />
+    <Compile Include="Retry\Backoff\FixedBackOffPolicy.cs" />
     <Compile Include="Retry\Backoff\IBackOffContext.cs" />
     <Compile Include="Retry\Backoff\IBackOffPolicy.cs" />
     <Compile Include="Retry\Backoff\ISleeper.cs" />
     <Compile Include="Retry\Backoff\ISleepingBackOffPolicy.cs" />
     <Compile Include="Retry\Backoff\NoBackOffPolicy.cs" />
+    <Compile Include="Retry\Backoff\ObjectWaitSleeper.cs" />
     <Compile Include="Retry\Backoff\StatelessBackOffPolicy.cs" />
     <Compile Include="Retry\Context\RetryContextSupport.cs" />
     <Compile Include="Retry\Interceptor\IMethodArgumentsKeyGenerator.cs" />
