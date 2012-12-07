@@ -72,6 +72,7 @@
     <Compile Include="Classify\Util\SimpleMethodInvoker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Retry\Backoff\BackOffInterruptedException.cs" />
+    <Compile Include="Retry\Backoff\ExponentialBackOffPolicy.cs" />
     <Compile Include="Retry\Backoff\IBackOffContext.cs" />
     <Compile Include="Retry\Backoff\IBackOffPolicy.cs" />
     <Compile Include="Retry\Backoff\ISleeper.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Retry\Interceptor\INewMethodArgumentsIdentifier.cs" />
     <Compile Include="Retry\Interceptor\IProxyMethodInvocation.cs" />
     <Compile Include="Retry\Interceptor\RetryOperationsInterceptor.cs" />
+    <Compile Include="Retry\Interceptor\StatefulRetryOperationsInterceptor.cs" />
     <Compile Include="Retry\Listener\RetryListenerSupport.cs" />
     <Compile Include="Retry\Policy\AlwaysRetryPolicy.cs" />
     <Compile Include="Retry\Policy\CompositeRetryPolicy.cs" />
