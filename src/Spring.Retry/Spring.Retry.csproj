@@ -79,10 +79,20 @@
     <Compile Include="Retry\Backoff\NoBackOffPolicy.cs" />
     <Compile Include="Retry\Backoff\StatelessBackOffPolicy.cs" />
     <Compile Include="Retry\Context\RetryContextSupport.cs" />
+    <Compile Include="Retry\Interceptor\IMethodArgumentsKeyGenerator.cs" />
+    <Compile Include="Retry\Interceptor\IMethodInvocationRecoverer.cs" />
+    <Compile Include="Retry\Interceptor\INewMethodArgumentsIdentifier.cs" />
+    <Compile Include="Retry\Interceptor\IProxyMethodInvocation.cs" />
+    <Compile Include="Retry\Interceptor\RetryOperationsInterceptor.cs" />
+    <Compile Include="Retry\Listener\RetryListenerSupport.cs" />
+    <Compile Include="Retry\Policy\AlwaysRetryPolicy.cs" />
+    <Compile Include="Retry\Policy\CompositeRetryPolicy.cs" />
+    <Compile Include="Retry\Policy\ExceptionClassifierRetryPolicy.cs" />
     <Compile Include="Retry\Policy\IRetryContextCache.cs" />
     <Compile Include="Retry\Policy\MapRetryContextCache.cs" />
     <Compile Include="Retry\Policy\RetryCacheCapacityExceededException.cs" />
     <Compile Include="Retry\Policy\SimpleRetryPolicy.cs" />
+    <Compile Include="Retry\Policy\TimeoutRetryPolicy.cs" />
     <Compile Include="Retry\Support\DefaultRetryState.cs" />
     <Compile Include="Retry\ExhaustedRetryException.cs" />
     <Compile Include="Retry\IRecoveryCallback.cs" />
@@ -94,11 +104,13 @@
     <Compile Include="Retry\IRetryState.cs" />
     <Compile Include="Retry\IRetryStatistics.cs" />
     <Compile Include="Retry\RetryException.cs" />
+    <Compile Include="Retry\Support\NeverRetryPolicy.cs" />
     <Compile Include="Retry\Support\RetrySimulation.cs" />
     <Compile Include="Retry\Support\RetrySimulator.cs" />
     <Compile Include="Retry\Support\RetrySynchronizationManager.cs" />
     <Compile Include="Retry\Support\RetryTemplate.cs" />
     <Compile Include="Retry\TerminatedRetryException.cs" />
+    <Compile Include="Support\CollectionExtensions.cs" />
     <Compile Include="Support\TypeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

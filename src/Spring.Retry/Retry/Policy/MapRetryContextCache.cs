@@ -21,31 +21,25 @@ using System.Collections.Generic;
 namespace Spring.Retry.Retry.Policy
 {
     /// <summary>
-    /// TODO: Update summary.
+    /// Map-based implementation of <see cref="IRetryContextCache"/>. The map backing the cache of contexts is synchronized.
     /// </summary>
+    /// <author>Dave Syer</author>
+    /// <author>Joe Fitzgerald (.NET)</author>
     public class MapRetryContextCache : IRetryContextCache
     {
-        /**
-	 * Default value for maximum capacity of the cache. This is set to a
-	 * reasonably low value (4096) to avoid users inadvertently filling the
-	 * cache with item keys that are inconsistent.
-	 */
+        /// <summary>
+        /// Default value for maximum capacity of the cache. This is set to a
+        /// reasonably low value (4096) to avoid users inadvertently filling the
+        /// cache with item keys that are inconsistent.
+        /// </summary>
         public static readonly int DEFAULT_CAPACITY = 4096;
 
         private readonly IDictionary<object, IRetryContext> map = new ConcurrentDictionary<object, IRetryContext>();
 
         private int capacity;
 
-        /**
-	 * Create a {@link MapRetryContextCache} with default capacity.
-	 */
-
-        /// <summary>Initializes a new instance of the <see cref="MapRetryContextCache"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="MapRetryContextCache"/> class with default capacity.</summary>
         public MapRetryContextCache() : this(DEFAULT_CAPACITY) { }
-
-        /**
-	 * @param defaultCapacity
-	 */
 
         /// <summary>Initializes a new instance of the <see cref="MapRetryContextCache"/> class.</summary>
         /// <param name="defaultCapacity">The default capacity.</param>

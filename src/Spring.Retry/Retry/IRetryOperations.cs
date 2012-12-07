@@ -13,6 +13,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+#region Using Directives
+using System;
+using Spring.Retry.Retry.Support;
+#endregion
+
 namespace Spring.Retry.Retry
 {
     /// <summary>
@@ -21,64 +26,120 @@ namespace Spring.Retry.Retry
     /// <author>Rob Harrop</author>
     /// <author>Dave Syer</author>
     /// <author>Joe Fitzgerald (.NET)</author>
-    public interface IRetryOperations<T>
+    public interface IRetryOperations
     {
-        /**
-	 * Execute the supplied {@link RetryCallback} with the configured retry
-	 * semantics. See implementations for configuration details.
-	 * 
-	 * @return the value returned by the {@link RetryCallback} upon successful
-	 * invocation.
-	 * @throws Exception any {@link Exception} raised by the
-	 * {@link RetryCallback} upon unsuccessful retry.
-	 */
-	 T Execute(IRetryCallback<T> retryCallback);
+        /// <summary>Execute the supplied <see cref="IRetryCallback{T}"/> with the configured retry
+        /// semantics. See implementations for configuration details.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the {@link RetryCallback} upon successful invocation.</returns>
+        T Execute<T>(IRetryCallback<T> retryCallback);
 
-	/**
-	 * Execute the supplied {@link RetryCallback} with a fallback on exhausted
-	 * retry to the {@link RecoveryCallback}. See implementations for
-	 * configuration details.
-	 * 
-	 * @return the value returned by the {@link RetryCallback} upon successful
-	 * invocation, and that returned by the {@link RecoveryCallback} otherwise.
-	 * @throws Exception any {@link Exception} raised by the
-	 * {@link RecoveryCallback} upon unsuccessful retry.
-	 */
-	T Execute(IRetryCallback<T> retryCallback, IRecoveryCallback<T> recoveryCallback);
+        /// <summary>Execute the supplied <see cref="IRetryCallback{T}"/> with the configured retry
+        /// semantics. See implementations for configuration details.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the {@link RetryCallback} upon successful invocation.</returns>
+        T Execute<T>(Func<IRetryContext, T> retryCallback);
 
-	/**
-	 * A simple stateful retry. Execute the supplied {@link RetryCallback} with
-	 * a target object for the attempt identified by the {@link DefaultRetryState}.
-	 * Exceptions thrown by the callback are always propagated immediately so
-	 * the state is required to be able to identify the previous attempt, if
-	 * there is one - hence the state is required. Normal patterns would see
-	 * this method being used inside a transaction, where the callback might
-	 * invalidate the transaction if it fails.<br/><br/>
-	 * 
-	 * See implementations for configuration details.
-	 * 
-	 * @return the value returned by the {@link RetryCallback} upon successful
-	 * invocation, and that returned by the {@link RecoveryCallback} otherwise.
-	 * @throws Exception any {@link Exception} raised by the
-	 * {@link RecoveryCallback}.
-	 * @throws ExhaustedRetryException if the last attempt for this state has
-	 * already been reached
-	 */
-	T Execute(IRetryCallback<T> retryCallback, IRetryState retryState);
+        /// <summary>Execute the supplied <see cref="IRetryCallback{T}"/> with a fallback on exhausted
+        /// retry to the <see cref="IRecoveryCallback{T}"/>. See implementations for
+        /// configuration details.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(IRetryCallback<T> retryCallback, IRecoveryCallback<T> recoveryCallback);
 
-	/**
-	 * A stateful retry with a recovery path. Execute the supplied
-	 * {@link RetryCallback} with a fallback on exhausted retry to the
-	 * {@link RecoveryCallback} and a target object for the retry attempt
-	 * identified by the {@link DefaultRetryState}.
-	 * 
-	 * @see #execute(RetryCallback, RetryState)
-	 * 
-	 * @return the value returned by the {@link RetryCallback} upon successful
-	 * invocation, and that returned by the {@link RecoveryCallback} otherwise.
-	 * @throws Exception any {@link Exception} raised by the
-	 * {@link RecoveryCallback} upon unsuccessful retry.
-	 */
-	T Execute(IRetryCallback<T> retryCallback, IRecoveryCallback<T> recoveryCallback, IRetryState retryState);
+        /// <summary>Execute the supplied <see cref="IRetryCallback{T}"/> with a fallback on exhausted
+        /// retry to the <see cref="IRecoveryCallback{T}"/>. See implementations for
+        /// configuration details.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(Func<IRetryContext, T> retryCallback, Func<IRetryContext, T> recoveryCallback);
+
+        /// <summary>Execute the supplied <see cref="IRetryCallback{T}"/> with a fallback on exhausted
+        /// retry to the <see cref="IRecoveryCallback{T}"/>. See implementations for
+        /// configuration details.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(IRetryCallback<T> retryCallback, Func<IRetryContext, T> recoveryCallback);
+
+        /// <summary>Execute the supplied <see cref="IRetryCallback{T}"/> with a fallback on exhausted
+        /// retry to the <see cref="IRecoveryCallback{T}"/>. See implementations for
+        /// configuration details.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(Func<IRetryContext, T> retryCallback, IRecoveryCallback<T> recoveryCallback);
+
+        /// <summary>A simple stateful retry. Execute the supplied {@link RetryCallback} with
+        /// a target object for the attempt identified by the {@link DefaultRetryState}.
+        /// Exceptions thrown by the callback are always propagated immediately so
+        /// the state is required to be able to identify the previous attempt, if
+        /// there is one - hence the state is required. Normal patterns would see
+        /// this method being used inside a transaction, where the callback might
+        /// invalidate the transaction if it fails.
+        /// See implementations for configuration details.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="retryState">The retry state.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(IRetryCallback<T> retryCallback, IRetryState retryState);
+
+        /// <summary>A simple stateful retry. Execute the supplied {@link RetryCallback} with
+        /// a target object for the attempt identified by the {@link DefaultRetryState}.
+        /// Exceptions thrown by the callback are always propagated immediately so
+        /// the state is required to be able to identify the previous attempt, if
+        /// there is one - hence the state is required. Normal patterns would see
+        /// this method being used inside a transaction, where the callback might
+        /// invalidate the transaction if it fails.
+        /// See implementations for configuration details.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="retryState">The retry state.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(Func<IRetryContext, T> retryCallback, IRetryState retryState);
+
+        /// <summary>A stateful retry with a recovery path. Execute the supplied<see cref="IRetryCallback{T}"/> with a fallback on exhausted retry to the<see cref="IRecoveryCallback{T}"/> and a target object for the retry attempt
+        /// identified by the <see cref="DefaultRetryState"/>.<see cref="Execute{T}(Spring.Retry.Retry.IRetryCallback{T})"/></summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <param name="retryState">The retry state.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(IRetryCallback<T> retryCallback, IRecoveryCallback<T> recoveryCallback, IRetryState retryState);
+
+        /// <summary>A stateful retry with a recovery path. Execute the supplied<see cref="IRetryCallback{T}"/> with a fallback on exhausted retry to the<see cref="IRecoveryCallback{T}"/> and a target object for the retry attempt
+        /// identified by the <see cref="DefaultRetryState"/>.<see cref="Execute{T}(Spring.Retry.Retry.IRetryCallback{T})"/></summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <param name="retryState">The retry state.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(Func<IRetryContext, T> retryCallback, Func<IRetryContext, T> recoveryCallback, IRetryState retryState);
+
+        /// <summary>A stateful retry with a recovery path. Execute the supplied<see cref="IRetryCallback{T}"/> with a fallback on exhausted retry to the<see cref="IRecoveryCallback{T}"/> and a target object for the retry attempt
+        /// identified by the <see cref="DefaultRetryState"/>.<see cref="Execute{T}(Spring.Retry.Retry.IRetryCallback{T})"/></summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <param name="retryState">The retry state.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(IRetryCallback<T> retryCallback, Func<IRetryContext, T> recoveryCallback, IRetryState retryState);
+
+        /// <summary>A stateful retry with a recovery path. Execute the supplied<see cref="IRetryCallback{T}"/> with a fallback on exhausted retry to the<see cref="IRecoveryCallback{T}"/> and a target object for the retry attempt
+        /// identified by the <see cref="DefaultRetryState"/>.<see cref="Execute{T}(Spring.Retry.Retry.IRetryCallback{T})"/></summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <param name="retryState">The retry state.</param>
+        /// <typeparam name="T">Type T.</typeparam>
+        /// <returns>The value returned by the <see cref="IRetryCallback{T}"/> upon successful invocation, and that returned by the <see cref="IRecoveryCallback{T}"/> otherwise.</returns>
+        T Execute<T>(Func<IRetryContext, T> retryCallback, IRecoveryCallback<T> recoveryCallback, IRetryState retryState);
     }
 }

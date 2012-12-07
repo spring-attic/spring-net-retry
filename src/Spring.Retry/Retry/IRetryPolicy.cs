@@ -49,7 +49,7 @@ namespace Spring.Retry.Retry
 
         /// <summary>Called once per retry attempt, after the callback fails.</summary>
         /// <param name="context">The current status object.</param>
-        /// <param name="throwable">The exception.</param>
-        void RegisterThrowable(IRetryContext context, Exception throwable);
+        /// <param name="exception">The exception.</param>
+        void RegisterException(IRetryContext context, Exception exception);
     }
 }

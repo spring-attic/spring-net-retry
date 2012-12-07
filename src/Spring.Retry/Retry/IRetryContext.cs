@@ -48,6 +48,6 @@ namespace Spring.Retry.Retry
         /// <summary>
         /// Gets the last Exception. Accessor for the exception object that caused the current retry.
         /// </summary>
-        Exception LastThrowable { get; }
+        Exception LastException { get; }
     }
 }

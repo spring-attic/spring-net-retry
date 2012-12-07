@@ -25,7 +25,7 @@ namespace Spring.Retry.Retry
     /// <typeparam name="T">Type T.</typeparam>
     /// <author>Dave Syer</author>
     /// <author>Joe Fitzgerald (.NET)</author>
-    public interface IRetryListener<T>
+    public interface IRetryListener
     {
         /// <summary>Called before the first attempt in a retry. For instance, implementers
         /// can set up state that is needed by the policies in the<see cref="IRetryOperations{T}"/>. The whole retry can be vetoed by returning
@@ -34,7 +34,16 @@ namespace Spring.Retry.Retry
         /// <param name="context">The current <see cref="IRetryContext"/>.</param>
         /// <param name="callback">The current <see cref="IRecoveryCallback{T}"/>.</param>
         /// <returns>True if the retry should proceed.</returns>
-        bool Open(IRetryContext context, IRetryCallback<T> callback);
+        bool Open<T>(IRetryContext context, IRetryCallback<T> callback);
+
+        /// <summary>Called before the first attempt in a retry. For instance, implementers
+        /// can set up state that is needed by the policies in the<see cref="IRetryOperations{T}"/>. The whole retry can be vetoed by returning
+        /// false from this method, in which case a <see cref="TerminatedRetryException"/>
+        /// will be thrown.</summary>
+        /// <param name="context">The current <see cref="IRetryContext"/>.</param>
+        /// <param name="callback">The current <see cref="IRecoveryCallback{T}"/>.</param>
+        /// <returns>True if the retry should proceed.</returns>
+        bool Open<T>(IRetryContext context, Func<IRetryContext, T> callback);
 
         /// <summary>Called after the final attempt (successful or not). Allow the interceptor
         /// to clean up any resource it is holding before control returns to the
@@ -42,12 +51,26 @@ namespace Spring.Retry.Retry
         /// <param name="context">The current <see cref="IRetryContext"/>.</param>
         /// <param name="callback">The current <see cref="IRecoveryCallback{T}"/>.</param>
         /// <param name="throwable">The last exception that was thrown by the callback.</param>
-        void Close(IRetryContext context, IRetryCallback<T> callback, Exception throwable);
+        void Close<T>(IRetryContext context, IRetryCallback<T> callback, Exception throwable);
+
+        /// <summary>Called after the final attempt (successful or not). Allow the interceptor
+        /// to clean up any resource it is holding before control returns to the
+        /// retry caller.</summary>
+        /// <param name="context">The current <see cref="IRetryContext"/>.</param>
+        /// <param name="callback">The current <see cref="IRecoveryCallback{T}"/>.</param>
+        /// <param name="throwable">The last exception that was thrown by the callback.</param>
+        void Close<T>(IRetryContext context, Func<IRetryContext, T> callback, Exception throwable);
 
         /// <summary>Called after every unsuccessful attempt at a retry.</summary>
         /// <param name="context">The current <see cref="IRetryContext"/>.</param>
         /// <param name="callback">The current <see cref="IRecoveryCallback{T}"/>.</param>
         /// <param name="throwable">The last exception that was thrown by the callback.</param>
-        void OnError(IRetryContext context, IRetryCallback<T> callback, Exception throwable);
+        void OnError<T>(IRetryContext context, IRetryCallback<T> callback, Exception throwable);
+
+        /// <summary>Called after every unsuccessful attempt at a retry.</summary>
+        /// <param name="context">The current <see cref="IRetryContext"/>.</param>
+        /// <param name="callback">The current <see cref="IRecoveryCallback{T}"/>.</param>
+        /// <param name="throwable">The last exception that was thrown by the callback.</param>
+        void OnError<T>(IRetryContext context, Func<IRetryContext, T> callback, Exception throwable);
     }
 }

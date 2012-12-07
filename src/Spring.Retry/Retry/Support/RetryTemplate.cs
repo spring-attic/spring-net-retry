@@ -20,6 +20,7 @@ using Common.Logging;
 using Spring.Core;
 using Spring.Retry.Retry.Backoff;
 using Spring.Retry.Retry.Policy;
+using Spring.Util;
 #endregion
 
 namespace Spring.Retry.Retry.Support
@@ -41,14 +42,14 @@ namespace Spring.Retry.Retry.Support
     /// {@link BackOffPolicy} used and no in progress retryable operations will be
     /// affected.</summary>
     /// <typeparam name="T">Type T.</typeparam>
-    public class RetryTemplate<T> : IRetryOperations<T>
+    public class RetryTemplate : IRetryOperations
     {
         protected static readonly ILog Logger = LogManager.GetCurrentClassLogger();
         private volatile IBackOffPolicy backOffPolicy = new NoBackOffPolicy();
 
         private volatile IRetryPolicy retryPolicy = new SimpleRetryPolicy(3, new Dictionary<Type, bool> { { typeof(Exception), true } });
 
-        private volatile IRetryListener<T>[] listeners = new IRetryListener<T>[0];
+        private volatile IRetryListener[] listeners = new IRetryListener[0];
 
         private IRetryContextCache retryContextCache = new MapRetryContextCache();
 
@@ -56,7 +57,7 @@ namespace Spring.Retry.Retry.Support
         public IRetryContextCache RetryContextCache { set { this.retryContextCache = value; } }
 
         /// <summary>Sets the listeners.</summary>
-        public IRetryListener<T>[] Listeners { set { this.listeners = value; } }
+        public IRetryListener[] Listeners { set { this.listeners = value; } }
 
         /// <summary>Sets the back off policy.</summary>
         public IBackOffPolicy BackOffPolicy { set { this.backOffPolicy = value; } }
@@ -64,18 +65,12 @@ namespace Spring.Retry.Retry.Support
         /// <summary>Sets the retry policy.</summary>
         public IRetryPolicy RetryPolicy { set { this.retryPolicy = value; } }
 
-        /**
-	 * Register an additional listener.
-	 * 
-	 * @param listener
-	 * @see #setListeners(RetryListener[])
-	 */
-
-        /// <summary>The register listener.</summary>
+        /// <summary>Register an additional listener.</summary>
         /// <param name="listener">The listener.</param>
-        public void RegisterListener(IRetryListener<T> listener)
+        /// <typeparam name="T">Type T.</typeparam>
+        public void RegisterListener<T>(IRetryListener listener)
         {
-            var list = new List<IRetryListener<T>>(this.listeners);
+            var list = new List<IRetryListener>(this.listeners);
             list.Add(listener);
             this.listeners = list.ToArray();
         }
@@ -83,36 +78,101 @@ namespace Spring.Retry.Retry.Support
         /// <summary>The execute.</summary>
         /// <param name="retryCallback">The retry callback.</param>
         /// <returns>The T.</returns>
-        public T Execute(IRetryCallback<T> retryCallback) { return this.DoExecute(retryCallback, null, null); }
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(IRetryCallback<T> retryCallback) { return this.DoExecute<T>(retryCallback, null, null); }
+
+        /// <summary>The execute.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <returns>The T.</returns>
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(Func<IRetryContext, T> retryCallback) { return this.DoExecute<T>(retryCallback, null, null); }
 
         /// <summary>The execute.</summary>
         /// <param name="retryCallback">The retry callback.</param>
         /// <param name="recoveryCallback">The recovery callback.</param>
         /// <returns>The T.</returns>
-        public T Execute(IRetryCallback<T> retryCallback, IRecoveryCallback<T> recoveryCallback) { return this.DoExecute(retryCallback, recoveryCallback, null); }
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(IRetryCallback<T> retryCallback, IRecoveryCallback<T> recoveryCallback) { return this.DoExecute<T>(retryCallback, recoveryCallback, null); }
+
+        /// <summary>The execute.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <returns>The T.</returns>
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(IRetryCallback<T> retryCallback, Func<IRetryContext, T> recoveryCallback) { return this.DoExecute<T>(retryCallback, recoveryCallback, null); }
+
+        /// <summary>The execute.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <returns>The T.</returns>
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(Func<IRetryContext, T> retryCallback, IRecoveryCallback<T> recoveryCallback) { return this.DoExecute<T>(retryCallback, recoveryCallback, null); }
+
+        /// <summary>The execute.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <returns>The T.</returns>
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(Func<IRetryContext, T> retryCallback, Func<IRetryContext, T> recoveryCallback) { return this.DoExecute<T>(retryCallback, recoveryCallback, null); }
 
         /// <summary>The execute.</summary>
         /// <param name="retryCallback">The retry callback.</param>
         /// <param name="retryState">The retry state.</param>
         /// <returns>The T.</returns>
-        public T Execute(IRetryCallback<T> retryCallback, IRetryState retryState) { return this.DoExecute(retryCallback, null, retryState); }
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(IRetryCallback<T> retryCallback, IRetryState retryState) { return this.DoExecute<T>(retryCallback, null, retryState); }
+
+        /// <summary>The execute.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="retryState">The retry state.</param>
+        /// <returns>The T.</returns>
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(Func<IRetryContext, T> retryCallback, IRetryState retryState) { return this.DoExecute<T>(retryCallback, null, retryState); }
 
         /// <summary>The execute.</summary>
         /// <param name="retryCallback">The retry callback.</param>
         /// <param name="recoveryCallback">The recovery callback.</param>
         /// <param name="retryState">The retry state.</param>
         /// <returns>The T.</returns>
-        public T Execute(IRetryCallback<T> retryCallback, IRecoveryCallback<T> recoveryCallback, IRetryState retryState) { return this.DoExecute(retryCallback, recoveryCallback, retryState); }
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(IRetryCallback<T> retryCallback, IRecoveryCallback<T> recoveryCallback, IRetryState retryState) { return this.DoExecute<T>(retryCallback, recoveryCallback, retryState); }
 
-        /// <summary>
-        /// Execute the callback once if the policy dictates that we can, otherwise execute the recovery callback.
-        /// </summary>
+        /// <summary>The execute.</summary>
         /// <param name="retryCallback">The retry callback.</param>
         /// <param name="recoveryCallback">The recovery callback.</param>
-        /// <param name="state">The state.</param>
+        /// <param name="retryState">The retry state.</param>
         /// <returns>The T.</returns>
-        protected T DoExecute(IRetryCallback<T> retryCallback, IRecoveryCallback<T> recoveryCallback, IRetryState state)
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(Func<IRetryContext, T> retryCallback, IRecoveryCallback<T> recoveryCallback, IRetryState retryState) { return this.DoExecute<T>(retryCallback, recoveryCallback, retryState); }
+
+        /// <summary>The execute.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <param name="retryState">The retry state.</param>
+        /// <returns>The T.</returns>
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(IRetryCallback<T> retryCallback, Func<IRetryContext, T> recoveryCallback, IRetryState retryState) { return this.DoExecute<T>(retryCallback, recoveryCallback, retryState); }
+
+        /// <summary>The execute.</summary>
+        /// <param name="retryCallback">The retry callback.</param>
+        /// <param name="recoveryCallback">The recovery callback.</param>
+        /// <param name="retryState">The retry state.</param>
+        /// <returns>The T.</returns>
+        /// <typeparam name="T">Type T.</typeparam>
+        public T Execute<T>(Func<IRetryContext, T> retryCallback, Func<IRetryContext, T> recoveryCallback, IRetryState retryState) { return this.DoExecute<T>(retryCallback, recoveryCallback, retryState); }
+
+        protected T DoExecute<T>(object retryCallback, object recoveryCallback, IRetryState state)
         {
+            if (retryCallback == null || (!(retryCallback is IRetryCallback<T>) & !(retryCallback is Func<IRetryContext, T>)))
+            {
+                throw new ArgumentException("retryCallback must be an IRetryCallback<T> or a Func<IRetryContext, T>");
+            }
+
+            if (recoveryCallback != null && (!(recoveryCallback is IRetryCallback<T>) & !(recoveryCallback is Func<IRetryContext, T>)))
+            {
+                throw new ArgumentException("recoveryCallback must be an IRecoveryCallback<T> or a Func<IRetryContext, T>");
+            }
+
             var retryPolicy = this.retryPolicy;
             var backOffPolicy = this.backOffPolicy;
 
@@ -129,7 +189,7 @@ namespace Spring.Retry.Retry.Support
             try
             {
                 // Give clients a chance to enhance the context...
-                var running = this.DoOpenInterceptors(retryCallback, context);
+                var running = retryCallback is IRetryCallback<T> ? this.DoOpenInterceptors((IRetryCallback<T>)retryCallback, context) : this.DoOpenInterceptors((Func<IRetryContext, T>)retryCallback, context);
 
                 if (!running)
                 {
@@ -171,13 +231,20 @@ namespace Spring.Retry.Retry.Support
                         // Reset the last exception, so if we are successful
                         // the close interceptors will not think we failed...
                         lastException = null;
-                        return retryCallback.DoWithRetry(context);
+                        return retryCallback is IRetryCallback<T> ? ((IRetryCallback<T>)retryCallback).DoWithRetry(context) : ((Func<IRetryContext, T>)retryCallback).Invoke(context);
                     }
                     catch (Exception e)
                     {
                         lastException = e;
 
-                        this.DoOnErrorInterceptors(retryCallback, context, e);
+                        if (retryCallback is IRetryCallback<T>)
+                        {
+                            this.DoOnErrorInterceptors((IRetryCallback<T>)retryCallback, context, e);
+                        }
+                        else
+                        {
+                            this.DoOnErrorInterceptors((Func<IRetryContext, T>)retryCallback, context, e);
+                        }
 
                         try
                         {
@@ -185,7 +252,7 @@ namespace Spring.Retry.Retry.Support
                         }
                         catch (Exception ex)
                         {
-                            throw new TerminatedRetryException("Could not register throwable", ex);
+                            throw new TerminatedRetryException("Could not register exception", ex);
                         }
 
                         if (this.CanRetry(retryPolicy, context) && !context.ExhaustedOnly)
@@ -213,24 +280,44 @@ namespace Spring.Retry.Retry.Support
                         }
                     }
 
-                 // A stateful attempt that can retry should have rethrown the
-				 // exception by now - i.e. we shouldn't get this far for a
-				 // stateful attempt if it can retry.
+                    // A stateful attempt that can retry should have rethrown the
+                    // exception by now - i.e. we shouldn't get this far for a
+                    // stateful attempt if it can retry.
                 }
 
                 Logger.Debug(m => m("Retry failed last attempt: count={0}" + context.RetryCount));
 
                 if (context.ExhaustedOnly)
                 {
-                    throw new ExhaustedRetryException("Retry exhausted after last attempt with no recovery path.", context.LastThrowable);
+                    throw new ExhaustedRetryException("Retry exhausted after last attempt with no recovery path.", context.LastException);
                 }
 
-                return this.HandleRetryExhausted(recoveryCallback, context, state);
+                if (recoveryCallback == null)
+                {
+                    return this.HandleRetryExhausted(default(IRecoveryCallback<T>), context, state);
+                }
+                else if (recoveryCallback is IRecoveryCallback<T>)
+                {
+                    return this.HandleRetryExhausted((IRecoveryCallback<T>)recoveryCallback, context, state);
+                }
+                else
+                {
+                    return this.HandleRetryExhausted((Func<IRetryContext, T>)recoveryCallback, context, state);
+                }
+                
             }
             finally
             {
                 this.Close(retryPolicy, context, state, lastException == null);
-                this.DoCloseInterceptors(retryCallback, context, lastException);
+                if (retryCallback is IRetryCallback<T>)
+                {
+                    this.DoCloseInterceptors((IRetryCallback<T>)retryCallback, context, lastException);
+                }
+                else
+                {
+                    this.DoCloseInterceptors((Func<IRetryContext, T>)retryCallback, context, lastException);
+                }
+
                 RetrySynchronizationManager.Clear();
             }
         }
@@ -250,7 +337,7 @@ namespace Spring.Retry.Retry.Support
         /// <param name="context">The context.</param>
         /// <returns>The System.Boolean.</returns>
         protected bool CanRetry(IRetryPolicy retryPolicy, IRetryContext context) { return retryPolicy.CanRetry(context); }
-        
+
         /// <summary>Clean up the cache if necessary and close the context provided (if the flag indicates that processing was successful).</summary>
         /// <param name="retryPolicy">The retry policy.</param>
         /// <param name="context">The context.</param>
@@ -272,7 +359,7 @@ namespace Spring.Retry.Retry.Support
             }
         }
 
-        /// <summary>The register throwable.</summary>
+        /// <summary>The register exception.</summary>
         /// <param name="retryPolicy">The retry policy.</param>
         /// <param name="state">The state.</param>
         /// <param name="context">The context.</param>
@@ -294,12 +381,10 @@ namespace Spring.Retry.Retry.Support
                 this.retryContextCache.Put(key, context);
             }
 
-            retryPolicy.RegisterThrowable(context, e);
+            retryPolicy.RegisterException(context, e);
         }
 
-        /// <summary>
-        /// Delegate to the <see cref="IRetryPolicy"/> having checked in the cache for an existing value if the state is not null.
-        /// </summary>
+        /// <summary>Delegate to the <see cref="IRetryPolicy"/> having checked in the cache for an existing value if the state is not null.</summary>
         /// <param name="retryPolicy">The retry policy.</param>
         /// <param name="state">The state.</param>
         /// <returns>The Spring.Retry.Retry.IRetryContext, either a new one or the one used last time the same state was encountered.</returns>
@@ -345,16 +430,15 @@ namespace Spring.Retry.Retry.Support
 
         private IRetryContext DoOpenInternal(IRetryPolicy retryPolicy) { return retryPolicy.Open(RetrySynchronizationManager.GetContext()); }
 
-        /// <summary>
-        /// Actions to take after final attempt has failed. If there is state clean 
+        /// <summary>Actions to take after final attempt has failed. If there is state clean 
         /// up the cache. If there is a recovery callback, execute that and return
-        /// its result. Otherwise throw an exception.
-        /// </summary>
+        /// its result. Otherwise throw an exception.</summary>
         /// <param name="recoveryCallback">The callback for recovery (might be null).</param>
         /// <param name="context">The current retry context.</param>
         /// <param name="state">The state.</param>
         /// <returns>The T.</returns>
-        protected T HandleRetryExhausted(IRecoveryCallback<T> recoveryCallback, IRetryContext context, IRetryState state)
+        /// <typeparam name="T">Type T.</typeparam>
+        protected T HandleRetryExhausted<T>(IRecoveryCallback<T> recoveryCallback, IRetryContext context, IRetryState state)
         {
             if (state != null)
             {
@@ -369,17 +453,44 @@ namespace Spring.Retry.Retry.Support
             if (state != null)
             {
                 Logger.Debug(m => m("Retry exhausted after last attempt with no recovery path."));
-                throw new ExhaustedRetryException("Retry exhausted after last attempt with no recovery path", context.LastThrowable);
+                throw new ExhaustedRetryException("Retry exhausted after last attempt with no recovery path", context.LastException);
             }
 
-            throw WrapIfNecessary(context.LastThrowable);
+            throw WrapIfNecessary(context.LastException);
         }
 
-        /// <summary>
-        /// Extension point for subclasses to decide on behaviour after catching an
+        /// <summary>Actions to take after final attempt has failed. If there is state clean 
+        /// up the cache. If there is a recovery callback, execute that and return
+        /// its result. Otherwise throw an exception.</summary>
+        /// <param name="recoveryCallback">The callback for recovery (might be null).</param>
+        /// <param name="context">The current retry context.</param>
+        /// <param name="state">The state.</param>
+        /// <returns>The T.</returns>
+        /// <typeparam name="T">Type T.</typeparam>
+        protected T HandleRetryExhausted<T>(Func<IRetryContext, T> recoveryCallback, IRetryContext context, IRetryState state)
+        {
+            if (state != null)
+            {
+                this.retryContextCache.Remove(state.GetKey());
+            }
+
+            if (recoveryCallback != null)
+            {
+                return recoveryCallback.Invoke(context);
+            }
+
+            if (state != null)
+            {
+                Logger.Debug(m => m("Retry exhausted after last attempt with no recovery path."));
+                throw new ExhaustedRetryException("Retry exhausted after last attempt with no recovery path", context.LastException);
+            }
+
+            throw WrapIfNecessary(context.LastException);
+        }
+
+        /// <summary>Extension point for subclasses to decide on behaviour after catching an
         /// exception in a <see cref="IRetryCallback{T}"/>. Normal stateless behaviour is not
-        /// to rethrow, and if there is state we rethrow.
-        /// </summary>
+        /// to rethrow, and if there is state we rethrow.</summary>
         /// <param name="retryPolicy">The retry policy.</param>
         /// <param name="context">The context.</param>
         /// <param name="state">The state.</param>
@@ -392,11 +503,11 @@ namespace Spring.Retry.Retry.Support
             }
             else
             {
-                return state.RollbackFor(context.LastThrowable);
+                return state.RollbackFor(context.LastException);
             }
         }
 
-        private bool DoOpenInterceptors(IRetryCallback<T> callback, IRetryContext context)
+        private bool DoOpenInterceptors<T>(IRetryCallback<T> callback, IRetryContext context)
         {
             var result = true;
 
@@ -408,7 +519,19 @@ namespace Spring.Retry.Retry.Support
             return result;
         }
 
-        private void DoCloseInterceptors(IRetryCallback<T> callback, IRetryContext context, Exception lastException)
+        private bool DoOpenInterceptors<T>(Func<IRetryContext, T> callback, IRetryContext context)
+        {
+            var result = true;
+
+            for (var i = 0; i < this.listeners.Length; i++)
+            {
+                result = result && this.listeners[i].Open(context, callback);
+            }
+
+            return result;
+        }
+
+        private void DoCloseInterceptors<T>(IRetryCallback<T> callback, IRetryContext context, Exception lastException)
         {
             for (var i = this.listeners.Length; i-- > 0;)
             {
@@ -416,27 +539,43 @@ namespace Spring.Retry.Retry.Support
             }
         }
 
-        private void DoOnErrorInterceptors(IRetryCallback<T> callback, IRetryContext context, Exception throwable)
+        private void DoCloseInterceptors<T>(Func<IRetryContext, T> callback, IRetryContext context, Exception lastException)
+        {
+            for (var i = this.listeners.Length; i-- > 0; )
+            {
+                this.listeners[i].Close(context, callback, lastException);
+            }
+        }
+
+        private void DoOnErrorInterceptors<T>(IRetryCallback<T> callback, IRetryContext context, Exception throwable)
         {
             for (var i = this.listeners.Length; i-- > 0;)
             {
                 this.listeners[i].OnError(context, callback, throwable);
             }
         }
-        
-        private static Exception WrapIfNecessary(Exception throwable)
+
+        private void DoOnErrorInterceptors<T>(Func<IRetryContext, T> callback, IRetryContext context, Exception throwable)
         {
-            // if (throwable is Error) {
-            //  throw (Error) throwable;
+            for (var i = this.listeners.Length; i-- > 0; )
+            {
+                this.listeners[i].OnError(context, callback, throwable);
+            }
+        }
+
+        private static Exception WrapIfNecessary(Exception exception)
+        {
+            // if (exception is Error) {
+            // throw (Error) exception;
             // }
             // else 
-            if (throwable is Exception)
+            if (exception is Exception)
             {
-                return throwable;
+                return exception;
             }
             else
             {
-                return new RetryException("Exception in batch process", throwable);
+                return new RetryException("Exception in batch process", exception);
             }
         }
     }

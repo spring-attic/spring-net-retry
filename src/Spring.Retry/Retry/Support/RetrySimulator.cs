@@ -72,7 +72,7 @@ namespace Spring.Retry.Retry.Support
             var stealingSleeper = new StealingSleeper();
             var stealingBackoff = this.backOffPolicy.WithSleeper(stealingSleeper);
 
-            var template = new RetryTemplate<object>();
+            var template = new RetryTemplate();
             template.BackOffPolicy = stealingBackoff;
             template.RetryPolicy = this.retryPolicy;
 

@@ -64,7 +64,7 @@ namespace Spring.Retry.Retry.Policy
         /// <returns>True if the last exception was retryable and the number of attempts so far is less than the limit.</returns>
         public bool CanRetry(IRetryContext context)
         {
-            var t = context.LastThrowable;
+            var t = context.LastException;
             return (t == null || this.RetryForException(t)) && context.RetryCount < this.maxAttempts;
         }
 
@@ -74,11 +74,11 @@ namespace Spring.Retry.Retry.Policy
 
         /// <summary>Update the status with another attempted retry and the latest exception.</summary>
         /// <param name="context">The context.</param>
-        /// <param name="throwable">The throwable.</param>
-        public void RegisterThrowable(IRetryContext context, Exception throwable)
+        /// <param name="exception">The throwable.</param>
+        public void RegisterException(IRetryContext context, Exception exception)
         {
             var simpleContext = (SimpleRetryContext)context;
-            simpleContext.RegisterThrowable(throwable);
+            simpleContext.RegisterException(exception);
         }
 
         /// <summary>Get a status object that can be used to track the current operation

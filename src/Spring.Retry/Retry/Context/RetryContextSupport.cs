@@ -48,20 +48,20 @@ namespace Spring.Retry.Retry.Context
         /// <summary>Gets the retry count.</summary>
         public int RetryCount { get { return this.count; } }
 
-        /// <summary>Gets the last throwable.</summary>
-        public Exception LastThrowable { get { return this.lastException; } }
+        /// <summary>Gets the last exception.</summary>
+        public Exception LastException { get { return this.lastException; } }
 
         /// <summary>Set the exception for the public interface <see cref="IRetryContext"/>, and
         /// also increment the retry count if the throwable is non-null.
         /// All <see cref="IRetryPolicy"/> implementations should use this method when they
-        /// register the throwable. It should only be called once per retry attempt
+        /// register the exception. It should only be called once per retry attempt
         /// because it increments a counter.
         /// Use of this method is not enforced by the framework - it is a service provider contract for authors of policies.</summary>
-        /// <param name="throwable">The exception that caused the current retry attempt to fail.</param>
-        public void RegisterThrowable(Exception throwable)
+        /// <param name="exception">The exception that caused the current retry attempt to fail.</param>
+        public void RegisterException(Exception exception)
         {
-            this.lastException = throwable;
-            if (throwable != null)
+            this.lastException = exception;
+            if (exception != null)
             {
                 this.count++;
             }
