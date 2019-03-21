@@ -12,7 +12,7 @@ To use Spring Retry for .NET in your applications, you should use the NuGet Pack
 
 ## Checking out and Building
 
-To check out the project from [GitHub](https://github.com/SpringSource/spring-net-amqp) and build from source using [MSBuild](http://msdn.microsoft.com/en-us/library/vstudio/dd393574.aspx), do the following from a command prompt:
+To check out the project from [GitHub](https://github.com/SpringSource/spring-net-amqp) and build from source using [MSBuild](https://msdn.microsoft.com/en-us/library/vstudio/dd393574.aspx), do the following from a command prompt:
 
     git clone git://github.com/SpringSource/spring-net-retry.git
     cd spring-net-retry
