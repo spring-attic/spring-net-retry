@@ -1,3 +1,5 @@
+# spring-net-retry is no longer actively maintained by VMware, Inc.
+
 Spring Retry for .NET
 =====================
 
